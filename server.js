@@ -1,4 +1,6 @@
-var path = require('path');
+var path = require('path'),
+    midi = require('midi');
+
 var express = require('express');
 var app = express();
 var server = require('http').Server(app);

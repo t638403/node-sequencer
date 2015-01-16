@@ -5,18 +5,64 @@
     <title>Node Sequencer</title>
 
     <script src="js/socket.io.js"></script>
+    <script src="bower/jquery/dist/jquery.min.js"></script>
+    <script src="bower/lodash/dist/lodash.min.js"></script>
+    <script src="js/NodeSequencer.js"></script>
     <script>
         var socket = io.connect('http://localhost');
         socket.on('news', function (data) {
             console.log(data);
             socket.emit('my other event', { my: 'data' });
         });
-    </script>
 
+        var nodeSequencer = new NodeSequencer({
+            global:{
+                bpm:120
+            }
+        });
+
+    </script>
 </head>
 
 <body>
-Content of the document......
+<form>
+    bpm:
+    <input type="text" class="setting" id="global.bpm"/>
+    <input type="button" value="Rew" id="rewind"/>
+    <input type="button" value="Play" id="play"/>
+    <input type="button" value="Stop" id="stop"/>
+    <br>
+
+</form>
+<script type="text/javascript">
+
+    $('input.setting').focusout(function(e) {
+        var $this = $(this);
+        nodeSequencer.setting($this.attr('id'), $this.val());
+    });
+
+    $('input.setting').each(function(i) {
+        var input = $(this);
+        input.val(nodeSequencer.setting(input.attr('id')))
+    });
+
+    $('input#play').click(function(){
+        nodeSequencer.play();
+    })
+
+    $('input#stop').click(function(){
+        nodeSequencer.stop();
+    })
+
+    $('input#rewind').click(function(){
+        nodeSequencer.rewind();
+    })
+
+    $(window).on('beat', function(e, beat){
+        console.log('Beat: %s', beat);
+    })
+
+</script>
 </body>
 
 </html> 
