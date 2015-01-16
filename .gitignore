@@ -1,1 +1,7 @@
-# Created by .gitignore support plugin (hsz.mobi)
+#PHPStorm
+.idea
+
+#NodeJS
+node_modules
+
+#Bower
