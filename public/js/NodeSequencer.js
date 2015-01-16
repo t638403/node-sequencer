@@ -1,4 +1,5 @@
 var NodeSequencer = function(settings){
+
     this.settings = settings || {};
     this.isPlaying = false;
     this.interval;
@@ -7,9 +8,8 @@ var NodeSequencer = function(settings){
 
 NodeSequencer.prototype = {
     setting:function(path, value, settings) {
-
         settings = settings || this.settings;
-        if(_.isString(path)) {path = path.split('.');}
+        if(_.isString(path)) {path = path.split('-');}
 
         if(path.length == 1) {
             if(!_.isUndefined(value)) { settings[path[0]] = value;}
@@ -22,7 +22,19 @@ NodeSequencer.prototype = {
         var _this = this;
 
         var beat = function() {
-            $(window).trigger('beat', [_this.beat++]);
+            console.log(_this.beat)
+            _.each(_this.settings.instruments, function(instrument) {
+                _.each(_this.settings.sequences[instrument.getName()], function(sequence) {
+                    _.each(sequence.getBeat(_this.beat), function(note) {
+                        var numerator_denominator = note.on.split('/');
+                        var fraction = (parseFloat(numerator_denominator[0]) - 1) / parseFloat(numerator_denominator[1]);
+                        setTimeout(function(){
+                            instrument.playNote(note);
+                        }, fraction * 60 * 1000 / parseFloat(_this.settings.global.bpm))
+                    })
+                });
+            });
+            _this.beat++;
             _this.interval = setTimeout(beat, 60 * 1000 / parseFloat(_this.settings.global.bpm));
         }
 
@@ -41,5 +53,17 @@ NodeSequencer.prototype = {
     },
     rewind:function() {
         this.beat = 0;
+    },
+    midiInPort:function(port) {
+        if(!_.isUndefined(port)) {
+            this.settings.midi.in.port = port;
+        }
+        return this.settings.midi.out.port;
+    },
+    midiOutPort:function(port) {
+        if(!_.isUndefined(port)) {
+            this.settings.midi.out.port = port;
+        }
+        return this.settings.midi.out.port;
     }
 };
