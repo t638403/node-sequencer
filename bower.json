@@ -1,0 +1,14 @@
+{
+  "name": "node-sequencer",
+  "version": "0.0.1",
+  "main": "public/css/main.css",
+  "ignore": [
+    ".jshintrc",
+    "**/*.txt"
+  ],
+  "dependencies": {
+    "d3": "~3.5.3",
+    "bootstrap": "~3.3.1"
+  },
+  "devDependencies": {}
+}
