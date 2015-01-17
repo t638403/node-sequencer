@@ -7,17 +7,6 @@ var NodeSequencer = function(settings){
 };
 
 NodeSequencer.prototype = {
-    setting:function(path, value, settings) {
-        settings = settings || this.settings;
-        if(_.isString(path)) {path = path.split('-');}
-
-        if(path.length == 1) {
-            if(!_.isUndefined(value)) { settings[path[0]] = value;}
-            return settings[path[0]];
-        } else {
-            return this.setting(path.slice(1), value, settings[path[0]]);
-        }
-    },
     play:function() {
         var _this = this;
 
