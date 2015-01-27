@@ -1,6 +1,10 @@
 var path = require('path'),
     midi = require('midi'),
-    _ = require('lodash');
+    _ = require('lodash'),
+    Sequencer = require('./classes/Sequencer'),
+    Metronome = require('./classes/Metronome'),
+    MidiInstrument = require('./classes/MidiInstrument'),
+    Midi = require('./classes/Midi');
 
 var express = require('express');
 var app = express();
@@ -16,14 +20,14 @@ server.listen(cfg.server.port);
 app.use("/", express.static(path.join(__dirname, 'public')));
 
 var getMidiPortNames = function(io, socket) {
-    var io = new midi[io+'put']();
-    var portCount = io.getPortCount();
-    var ports = [];
-    for(var i = 0; i < portCount; i++) {
-        ports.push(io.getPortName(i))
-    }
-    io.closePort();
-    return ports;
+    //var io = new midi[io+'put']();
+    //var portCount = io.getPortCount();
+    //var ports = [];
+    //for(var i = 0; i < portCount; i++) {
+    //    ports.push(io.getPortName(i))
+    //}
+    //io.closePort();
+    //return ports;
 }
 
 var fillMidiPortNameSelectBoxes = function(socket) {
@@ -50,53 +54,57 @@ var setting = function(settings, path, value) {
     }
 }
 
+var midi =new Midi();
+var metronome = new Metronome();
+var mk2 = new MidiInstrument({"name":"MK2:CH02","midi":{"channel":2}}, midi);
+var xl1_1 = new MidiInstrument({"name":"XL1:CH01","midi":{"channel":1}}, midi);
+var xl1_3 = new MidiInstrument({"name":"XL1:CH03","midi":{"channel":3}}, midi);
+var xl1_4 = new MidiInstrument({"name":"XL1:CH04","midi":{"channel":4}}, midi);
+var instruments = {
+    'mk2':mk2,
+    'xl1_1':xl1_1,
+    'xl1_3':xl1_3,
+    'xl1_4':xl1_4
+};
+var sequencer = new Sequencer(metronome, instruments);
+var objects = {
+    midi:midi,
+    metronome:metronome,
+    instruments:instruments,
+    sequencer:sequencer
+}
+
 io.on('connection', function (socket) {
+
+    console.log('client connected')
 
     initFrontEnd(socket);
 
-    socket.emit('load setting', {name:'global-bpm', value:setting(project,  'global-bpm')})
+    socket.emit('load setting', {name:'metronome-bpm', value:setting(project,  'metronome-bpm')})
 
     socket.on('load setting', function (name) {
         socket.emit('load setting', {name:name, value:setting(project,  name)})
     });
     socket.on('save setting', function (s) {
         var before = setting(project, s.name);
+        var parts = s.name.split('-');
         setting(project,  s.name, s.value);
+        if(_.has(objects, part[0])) {
+            objects[parts[0]][parts[1]](s.value);
+        }
         console.log('saved setting \'%s\' from \'%s\' to \'%s\'', s.name, before, s.value);
     });
     socket.on('action play', function() {
-        console.log('play');
+        console.log('play')
+        objects.midi.start();
+        objects.sequencer.start();
     });
     socket.on('action stop', function() {
-        console.log('stop');
+        objects.sequencer.stop();
+        objects.midi.stop();
     });
     socket.on('action rewind', function() {
-        console.log('rewind');
+        objects.sequencer.rewind();
     });
 
 });
-
-//var xl1 = new Instrument({
-//    name:'XL-1',
-//    channel:1
-//});
-//
-//var s1 = new Sequence([
-//    '1:1/8:1/8:C#2:80',
-//    '1:3/8:1/8:D2:80',
-//    '1:5/8:1/8:E2:80',
-//    '1:7/8:1/8:F2:80',
-//    '3:1/8:1/8:C#2:80',
-//    '3:3/8:1/8:D2:80',
-//    '3:5/8:1/8:E2:80',
-//    '3:7/8:1/8:F2:80'
-//]);
-//
-//var nodeSequencer = new NodeSequencer({
-//    midi:{'in':{port:1},'out':{port:2}},
-//    global:{bpm:120},
-//    instruments:[xl1],
-//    sequences:{
-//        'XL-1':[s1]
-//    }
-//});

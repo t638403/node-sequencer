@@ -3,7 +3,7 @@ var Sequence = function(sequence) {
     this.sequence = {};
 
     var toObj = function(params) {
-        return {beat:params[0],on:params[1],duration:params[2],pitch:params[3],velocity:params[4]};
+        return {beatInterval:params[0],on:params[1],duration:params[2],pitch:params[3],velocity:params[4]};
     }
     _.each(sequence, function(note) {
         if(!/^\d+:\d+\/\d+:\d+\/\d+:[ABCDEFG](|#)\d:\d+$/.test(note)) {throw new Error('Parse Error, invalid note definition');}

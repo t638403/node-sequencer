@@ -20,7 +20,7 @@
         input, select, .button {
             font-size: 0.9em;
             border: none;
-            background-color: white;
+            background-color: transparent;
         }
         .button {
             cursor: default;
@@ -37,17 +37,18 @@
             width: 23px;
         }
         .menu-container {
-            background-color: #ddd;
+            background-color: #eee;
             padding: 1px;
             padding-bottom: 0;
+            border-bottom: 1px solid #ccc;
         }
         .menu-section {
             overflow: auto;
             border-radius: 2px;
             display: inline-block;
             float: left;
-            background-color: #ccc;
-            border: 1px solid #aaa;
+            background-color: white;
+            border: 1px solid #ccc;
             padding: 1px 2px 2px 2px;
             margin: 1px 1px 2px 1px;
         }
@@ -58,9 +59,6 @@
     <script src="js/socket.io.js"></script>
     <script src="bower/jquery/dist/jquery.min.js"></script>
     <script src="bower/lodash/dist/lodash.min.js"></script>
-    <script src="classes/NodeSequencer.js"></script>
-    <script src="classes/Instrument.js"></script>
-    <script src="classes/Sequence.js"></script>
     <script>
         $(document).ready(function() {
 
@@ -125,12 +123,12 @@
             <label>out</label><select class='setting' id="midi-out-port"></select>
         </div>
         <div class="menu-section">
-            <label>bpm</label><input type="text" class="setting" id="global-bpm"/>
+            <label>bpm</label><input type="text" class="setting" id="metronome-bpm"/>
         </div>
         <div class="menu-section">
-            <div class="button action" id="rewind"/><i class="fa fa-step-backward fa-1x"></i></div>
-            <div class="button action" id="play"/><i class="fa fa-play fa-1x"></i></div>
-            <div class="button action" id="stop"/><i class="fa fa-stop fa-1x"></i></div>
+            <div class="button action" id="rewind"><i class="fa fa-step-backward fa-1x"></i></div>
+            <div class="button action" id="play"><i class="fa fa-play fa-1x"></i></div>
+            <div class="button action" id="stop"><i class="fa fa-stop fa-1x"></i></div>
         </div>
 
     </form>
