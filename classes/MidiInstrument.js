@@ -23,6 +23,9 @@ MidiInstrument.prototype = {
         setTimeout(function() {
             _this._midi.output.sendMessage([note_off, note_number, note.velocity])
         }, note.duration);
+    },
+    ctrlChange:function(ctrl, value) {
+        this._midi.ctrlChange(this._instrument.midi.channel, ctrl, value)
     }
 }
 

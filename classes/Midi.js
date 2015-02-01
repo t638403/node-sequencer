@@ -1,7 +1,7 @@
 var _ = require('lodash'),
     midi = require('midi');
 
-var Midi = function(){
+var Midi = function(metronome){
     this._in = {port:2};
     this._out = {port:1};
     this.output;
@@ -33,5 +33,18 @@ Midi.prototype.start = function() {
 Midi.prototype.stop = function() {
     this.output.closePort(1)
 }
+
+Midi.prototype.ctrlChange = function(channel, ctrl, value) {
+    if(!_.isNumber(ctrl) || ctrl < 0 || ctrl > 127) {console.log('Midi.ctrlChange: ctrl index out of bounds, must be 0-127')}
+    if(!_.isNumber(value) || value < 0 || value > 127) {console.log('Midi.ctrlChange: value must be 0-127')}
+    var Bn = 175 + channel;
+    if(_.isNumber(Bn) && Bn > 175 && Bn < 192) {
+        this.output.sendMessage([Bn, ctrl, value]);
+    } else {
+        console.log('Midi.ctrlChange: Bn index out of bounds, must be 176-191');
+    }
+}
+
+Midi.prototype.sendClock = function(){this.output.sendMessage([248]);}
 
 module.exports = Midi;

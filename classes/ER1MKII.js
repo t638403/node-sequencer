@@ -105,7 +105,7 @@ ER1MKII.prototype = _.assign(ER1MKII.prototype, {
             S1:this.S1,S2:this.S2,S3:this.S3,S4:this.S4,TK:this.TK,
             HH:this.HH,CL:this.CL,CR:this.CR,A1:this.A1,A2:this.A2
         });
-        _.each(er1mkii_note, function(val, knob) {
+        _.each(er1mkii_note, function(value, knob) {
             var nrpn = NRPN[note2label[note.note]];
             if(_.has(nrpn, knob)) {
                 var Bn = 175 + _this._instrument.midi.channel;
@@ -116,7 +116,7 @@ ER1MKII.prototype = _.assign(ER1MKII.prototype, {
 
                 _this._midi.output.sendMessage([Bn, LSB, parseInt(nrpn[knob].LSB, 16)]);
                 _this._midi.output.sendMessage([Bn, MSB, parseInt('0x02', 16)]);
-                _this._midi.output.sendMessage([Bn, DataEntryMSB, val]);
+                _this._midi.output.sendMessage([Bn, DataEntryMSB, value]);
                 _this._midi.output.sendMessage([Bn, DataEntryLSB, parseInt(nrpn[knob].DataEntryLSB, 16)]);
             }
         });
