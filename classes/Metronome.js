@@ -8,7 +8,7 @@ var Metronome = function() {
     this._quarter = 0;
     this._third = 0;
     this._isPlaying = false;
-    this._intervals = [];
+    this._intervals = []; // TODO memory leak. Keeps growing while playing
     this._bpm = 120;
     this._swing = 0;
 }
@@ -52,13 +52,14 @@ Metronome.prototype.start = function() {
                 _this._quarter++;
             }, quarter * _this.quarterInterval(quarter)));
         }
-        //
+
         for(var third = 0; third < 3; third++) {
             _this._intervals.push(setTimeout(function(){
                 _this.emit('third', _this._third);
                 _this._third++;
             }, third * _this.thirdInterval(third)));
         }
+
     }
     if(!this._isPlaying) {
         this._isPlaying = true;
@@ -66,7 +67,7 @@ Metronome.prototype.start = function() {
     }
 }
 
-Metronome.prototype.stop = function() {
+Metronome.prototype.pause = function() {
     if(this._isPlaying) {
         _.each(this._intervals, function(interval){
             clearTimeout(interval);
@@ -74,6 +75,11 @@ Metronome.prototype.stop = function() {
         this._beat--;
     }
     this._isPlaying = false;
+}
+
+Metronome.prototype.stop = function() {
+    //this.pause();
+    //this.rewind();
 }
 
 Metronome.prototype.rewind = function() {

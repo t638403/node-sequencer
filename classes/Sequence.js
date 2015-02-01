@@ -1,22 +1,36 @@
-var Sequence = function(sequence) {
-    var _this = this;
-    this.sequence = {};
+var _ = require('lodash'),
+    util = require('util'),
+    EventEmitter = require('events').EventEmitter;
 
-    var toObj = function(params) {
-        return {beatInterval:params[0],on:params[1],duration:params[2],pitch:params[3],velocity:params[4]};
-    }
-    _.each(sequence, function(note) {
-        if(!/^\d+:\d+\/\d+:\d+\/\d+:[ABCDEFG](|#)\d:\d+$/.test(note)) {throw new Error('Parse Error, invalid note definition');}
-        var params = note.split(':');
-        if(_this.sequence[params[0]]) {
-            _this.sequence[params[0]].push(toObj(params))
-        } else {
-            _this.sequence[params[0]] = [toObj(params)]
-        }
+var Sequence = function(metronome) {
+    EventEmitter.call(this);
+    var _this = this;
+    this._metronome = metronome;
+
+    this._metronome.on('beat', function(nr) {
+        _this.emit('beat', nr);
     });
-}
-Sequence.prototype = {
-    getBeat:function(index) {
-        return this.sequence[index];
+    this._metronome.on('quarter', function(nr, beat, quarter) {
+        _this.emit('quarter', nr, beat, quarter);
+    });
+    this._metronome.on('third', function(nr, beat, third) {
+        _this.emit('third', nr, beat, third);
+    });
+};
+
+util.inherits(Sequence, EventEmitter);
+
+Sequence.prototype = _.assign(Sequence.prototype, {
+    play:function() {
+        if(_.has(this, 'beat')) {this.on('beat', this.beat);}
+        if(_.has(this, 'quarter')) {this.on('quarter', this.quarter);}
+        if(_.has(this, 'third')) {this.on('third', this.third);}
+    },
+    stop:function() {
+        this.removeAllListeners('beat');
+        this.removeAllListeners('quarter');
+        this.removeAllListeners('third');
     }
-}
+});
+
+module.exports = Sequence;

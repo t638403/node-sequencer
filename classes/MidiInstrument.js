@@ -1,4 +1,4 @@
-
+var _ = require('lodash');
 
 var MidiInstrument = function(instrument, midi) {
     this._instrument = instrument;
@@ -15,7 +15,7 @@ MidiInstrument.prototype = {
     playNote:function(note) {
         var _this = this;
         var note_on = 143 + this._instrument.midi.channel;
-        var note_number = this.getNoteNumber(note.pitch);
+        var note_number = this.getNoteNumber(note.note);
         var message = [note_on, note_number, note.velocity]
         this._midi.output.sendMessage(message)
 

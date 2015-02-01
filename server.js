@@ -1,7 +1,6 @@
 var path = require('path'),
-    midi = require('midi'),
     _ = require('lodash'),
-    Sequencer = require('./classes/Sequencer'),
+    Sequencer = require('./classes/Sequence'),
     Metronome = require('./classes/Metronome'),
     MidiInstrument = require('./classes/MidiInstrument'),
     Midi = require('./classes/Midi');
@@ -54,7 +53,7 @@ var setting = function(settings, path, value) {
     }
 }
 
-var midi =new Midi();
+var midi = new Midi();
 var metronome = new Metronome();
 var mk2 = new MidiInstrument({"name":"MK2:CH02","midi":{"channel":2}}, midi);
 var xl1_1 = new MidiInstrument({"name":"XL1:CH01","midi":{"channel":1}}, midi);
@@ -66,7 +65,7 @@ var instruments = {
     'xl1_3':xl1_3,
     'xl1_4':xl1_4
 };
-var sequencer = new Sequencer(metronome, instruments);
+var sequencer = new Sequence(metronome, instruments);
 var objects = {
     midi:midi,
     metronome:metronome,
